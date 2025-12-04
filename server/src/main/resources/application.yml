@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: server
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fav_car_service
+    username: postgres
+    password: uborka
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+
+jwt:
+  secret: mysecret
+  issuer: vehicle-registry-app
+  duration: 30m
+
+security:
+  max-failed-attempts: 5
