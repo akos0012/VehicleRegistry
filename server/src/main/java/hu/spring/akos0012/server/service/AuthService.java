@@ -2,11 +2,9 @@ package hu.spring.akos0012.server.service;
 
 import hu.spring.akos0012.server.config.SecurityProperties;
 import hu.spring.akos0012.server.dto.login.LoginResponseDTO;
-import hu.spring.akos0012.server.dto.user.UserCreateDTO;
-import hu.spring.akos0012.server.dto.user.UserResponseDTO;
+import hu.spring.akos0012.server.dto.register.RegisterDTO;
 import hu.spring.akos0012.server.exception.InvalidCredentialsException;
 import hu.spring.akos0012.server.exception.UserInactiveException;
-import hu.spring.akos0012.server.mapper.UserMapper;
 import hu.spring.akos0012.server.model.User;
 import hu.spring.akos0012.server.security.JwtService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,25 +18,22 @@ import java.util.List;
 public class AuthService {
 
     private final UserService userService;
-    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final SecurityProperties securityProperties;
 
     public AuthService(UserService userService,
-                       UserMapper userMapper,
                        PasswordEncoder passwordEncoder,
                        JwtService jwtService,
                        SecurityProperties securityProperties) {
         this.userService = userService;
-        this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.securityProperties = securityProperties;
     }
 
-    public UserResponseDTO register(UserCreateDTO userCreateDTO) {
-        return userService.create(userCreateDTO);
+    public void register(RegisterDTO registerDTO) {
+        userService.register(registerDTO);
     }
 
     public LoginResponseDTO login(String username, String password) {
@@ -50,10 +45,9 @@ public class AuthService {
 
         UserDetails userDetails = createUserDetails(user);
 
-        String token = jwtService.createJwt(userDetails);
-        UserResponseDTO userResponseDTO = userMapper.toDto(user);
+        String token = jwtService.createJwt(userDetails, user.getId(), user.getFullName());
 
-        return new LoginResponseDTO(userResponseDTO, token);
+        return new LoginResponseDTO(token);
     }
 
     private User findActiveOrFail(String username) {
@@ -69,6 +63,7 @@ public class AuthService {
 
     private void validatePasswordOrHandleFailure(User user, String rawPassword) {
         if (passwordEncoder.matches(rawPassword, user.getPassword())) {
+            System.out.println("HELLO THERE!");
             return;
         }
 

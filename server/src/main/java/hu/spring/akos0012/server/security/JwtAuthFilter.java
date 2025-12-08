@@ -1,5 +1,6 @@
 package hu.spring.akos0012.server.security;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,8 +40,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
-            } catch (Exception e) {
-                logger.warn("Invalid JWT token", e);
+            } catch (TokenExpiredException e) {
+                SecurityContextHolder.clearContext();
+                request.setAttribute("exception", e);
             }
         }
 

@@ -1,5 +1,6 @@
 package hu.spring.akos0012.server.mapper;
 
+import hu.spring.akos0012.server.dto.register.RegisterDTO;
 import hu.spring.akos0012.server.dto.user.UserCreateDTO;
 import hu.spring.akos0012.server.dto.user.UserResponseDTO;
 import hu.spring.akos0012.server.model.User;
@@ -15,6 +16,6 @@ public interface UserMapper {
     List<UserResponseDTO> toDtoList(List<User> users);
 
     User fromCreateDto(UserCreateDTO userCreateDTO);
-
-
+    
+    User fromRegisterDto(RegisterDTO registerDTO);
 }

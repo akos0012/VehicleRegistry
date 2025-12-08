@@ -15,6 +15,9 @@ public record UserCreateDTO(
         Role role,
 
         @NotBlank
-        String fullName
+        String fullName,
+
+        @NotNull
+        boolean active
 ) {
 }

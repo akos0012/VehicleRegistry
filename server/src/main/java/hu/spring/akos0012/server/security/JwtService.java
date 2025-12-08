@@ -26,11 +26,13 @@ public class JwtService {
         this.algorithm = Algorithm.HMAC256(props.getSecret());
     }
 
-    public String createJwt(UserDetails user) {
+    public String createJwt(UserDetails user, Long userId, String fullName) {
         return JWT.create()
                 .withSubject(user.getUsername())
                 .withIssuer(issuer)
                 .withExpiresAt(new Date(System.currentTimeMillis() + duration.toMillis()))
+                .withClaim("userId", userId)
+                .withClaim("fullName", fullName)
                 .withArrayClaim("roles",
                         user.getAuthorities()
                                 .stream()

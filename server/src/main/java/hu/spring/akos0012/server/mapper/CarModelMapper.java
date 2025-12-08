@@ -12,6 +12,7 @@ import java.util.List;
 public interface CarModelMapper {
 
     @Mapping(source = "brand.id", target = "brandId")
+    @Mapping(source = "brand.name", target = "brandName")
     CarModelResponseDTO toDto(CarModel carModel);
 
     List<CarModelResponseDTO> toDtoList(List<CarModel> carModels);

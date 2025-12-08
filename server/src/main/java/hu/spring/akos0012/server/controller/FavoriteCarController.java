@@ -1,15 +1,13 @@
 package hu.spring.akos0012.server.controller;
 
-import hu.spring.akos0012.server.dto.favoritecar.FavoriteCarCreateDTO;
-import hu.spring.akos0012.server.dto.favoritecar.FavoriteCarResponseDTO;
-import hu.spring.akos0012.server.dto.favoritecar.FavoriteCarUpdateDTO;
+import hu.spring.akos0012.server.dto.favoritecar.*;
 import hu.spring.akos0012.server.service.FavoriteCarService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -22,7 +20,6 @@ public class FavoriteCarController {
         this.favoriteCarService = favoriteCarService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<FavoriteCarResponseDTO>> findAll() {
         return ResponseEntity.ok(favoriteCarService.findAll());
@@ -34,8 +31,8 @@ public class FavoriteCarController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FavoriteCarResponseDTO> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(favoriteCarService.findById(id));
+    public ResponseEntity<FavoriteCarResponseDTO> findById(@PathVariable Long id, Principal principal) {
+        return ResponseEntity.ok(favoriteCarService.findById(id, principal.getName()));
     }
 
     @PostMapping
@@ -44,9 +41,21 @@ public class FavoriteCarController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newFavCar);
     }
 
+    @PostMapping("/createWithModel")
+    public ResponseEntity<FavoriteCarResponseDTO> createWithModel(@RequestBody @Valid FavoriteCarCreateWithModelDTO favCarCreateDTO) {
+        FavoriteCarResponseDTO newFavCar = favoriteCarService.createWithModel(favCarCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newFavCar);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<FavoriteCarResponseDTO> updateById(@PathVariable Long id, @RequestBody @Valid FavoriteCarUpdateDTO favCarUpdateDTO) {
         FavoriteCarResponseDTO updatedFavCar = favoriteCarService.updateById(id, favCarUpdateDTO);
+        return ResponseEntity.ok(updatedFavCar);
+    }
+
+    @PutMapping("/updateWithModel/{id}")
+    public ResponseEntity<FavoriteCarResponseDTO> updateByIdWithModel(@PathVariable Long id, @RequestBody @Valid FavoriteCarUpdateWithModelDTO favCarUpdateDTO) {
+        FavoriteCarResponseDTO updatedFavCar = favoriteCarService.updateByIdWithModel(id, favCarUpdateDTO);
         return ResponseEntity.ok(updatedFavCar);
     }
 

@@ -1,15 +1,19 @@
 package hu.spring.akos0012.server.service;
 
+import hu.spring.akos0012.server.dto.register.RegisterDTO;
 import hu.spring.akos0012.server.dto.user.UserCreateDTO;
 import hu.spring.akos0012.server.dto.user.UserResponseDTO;
 import hu.spring.akos0012.server.dto.user.UserUpdateDTO;
-import hu.spring.akos0012.server.exception.UserAlreadyExistsException;
+import hu.spring.akos0012.server.exception.AlreadyExistsException;
 import hu.spring.akos0012.server.mapper.UserMapper;
+import hu.spring.akos0012.server.model.Role;
 import hu.spring.akos0012.server.model.User;
 import hu.spring.akos0012.server.repository.CarImageRepository;
 import hu.spring.akos0012.server.repository.FavoriteCarRepository;
 import hu.spring.akos0012.server.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +26,10 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+
     private final FavoriteCarRepository favoriteCarRepository;
     private final CarImageRepository carImageRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
@@ -48,14 +54,26 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
+    public void register(RegisterDTO registerDTO) {
+        if (userRepository.existsByUsername(registerDTO.username())) {
+            throw new AlreadyExistsException("User already exists: " + registerDTO.username());
+        }
+
+        User user = userMapper.fromRegisterDto(registerDTO);
+        user.setPassword(passwordEncoder.encode(registerDTO.password()));
+        user.setRole(Role.USER);
+        user.setActive(true);
+
+        userRepository.save(user);
+    }
+
     public UserResponseDTO create(UserCreateDTO userCreateDTO) {
         if (userRepository.existsByUsername(userCreateDTO.username())) {
-            throw new UserAlreadyExistsException(userCreateDTO.username());
+            throw new AlreadyExistsException(userCreateDTO.username());
         }
 
         User user = userMapper.fromCreateDto(userCreateDTO);
         user.setPassword(passwordEncoder.encode(userCreateDTO.password()));
-        user.setActive(true);
 
         return userMapper.toDto(userRepository.save(user));
     }
@@ -88,11 +106,35 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User save(User user) {
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public void setUserActiveFalse(Long id, String username) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+
+        if (!isAdmin(username) && !user.getUsername().equals(username)) {
+            throw new AccessDeniedException("You are not allowed to access this resource");
+        }
+
+        user.setActive(false);
+        userRepository.save(user);
+    }
+
+    protected User save(User user) {
         return userRepository.save(user);
     }
 
-    public Optional<User> findByUsername(String username) {
+    protected Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    protected boolean existsById(Long id) {
+        return userRepository.existsById(id);
+    }
+
+    protected boolean isAdmin(String username) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) return false;
+
+        return user.getRole() == Role.ADMIN;
     }
 }

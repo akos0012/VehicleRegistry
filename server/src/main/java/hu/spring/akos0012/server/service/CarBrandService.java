@@ -5,9 +5,11 @@ import hu.spring.akos0012.server.dto.carbrand.CarBrandResponseDTO;
 import hu.spring.akos0012.server.mapper.CarBrandMapper;
 import hu.spring.akos0012.server.model.CarBrand;
 import hu.spring.akos0012.server.repository.CarBrandRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CarBrandService {
@@ -24,8 +26,13 @@ public class CarBrandService {
         return carBrandMapper.toDtoList(carBrandRepository.findAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public CarBrandResponseDTO create(CarBrandCreateDTO brandCreateDTO) {
         CarBrand newBrand = carBrandMapper.fromCreateDto(brandCreateDTO);
         return carBrandMapper.toDto(carBrandRepository.save(newBrand));
+    }
+
+    protected Optional<CarBrand> findById(Long id) {
+        return carBrandRepository.findById(id);
     }
 }

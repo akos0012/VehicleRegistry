@@ -4,11 +4,18 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/fav_car_service
     username: postgres
-    password: uborka
+    password: password
+    hikari:
+      auto-commit: false
   jpa:
     hibernate:
       ddl-auto: create
     show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
 
 jwt:
   secret: mysecret

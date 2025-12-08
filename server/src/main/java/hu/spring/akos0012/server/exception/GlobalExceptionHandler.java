@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,8 +47,8 @@ public class GlobalExceptionHandler {
                 .body("Duplicate value or constraint violation: " + ex.getMostSpecificCause().getMessage());
     }
 
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<String> handleUserAlreadyExists(UserAlreadyExistsException ex) {
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<String> handleUserAlreadyExists(AlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
@@ -67,7 +68,7 @@ public class GlobalExceptionHandler {
     }
 
     // 5) Runtime error
-    @ExceptionHandler(RuntimeException.class)
+    /*@ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("An error occurred: " + ex.getMessage());
@@ -77,5 +78,5 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
-    }
+    }*/
 }

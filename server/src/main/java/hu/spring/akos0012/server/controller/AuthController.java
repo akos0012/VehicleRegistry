@@ -2,6 +2,7 @@ package hu.spring.akos0012.server.controller;
 
 import hu.spring.akos0012.server.dto.login.LoginDTO;
 import hu.spring.akos0012.server.dto.login.LoginResponseDTO;
+import hu.spring.akos0012.server.dto.register.RegisterDTO;
 import hu.spring.akos0012.server.dto.user.UserCreateDTO;
 import hu.spring.akos0012.server.dto.user.UserResponseDTO;
 import hu.spring.akos0012.server.service.AuthService;
@@ -20,9 +21,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> register(@RequestBody @Valid UserCreateDTO userCreateDTO) {
-        UserResponseDTO newUser = authService.register(userCreateDTO);
-        return ResponseEntity.ok(newUser);
+    public ResponseEntity<Void> register(@RequestBody @Valid RegisterDTO registerDTO) {
+        authService.register(registerDTO);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")

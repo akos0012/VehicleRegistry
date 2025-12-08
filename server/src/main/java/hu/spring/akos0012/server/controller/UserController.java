@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -23,26 +24,33 @@ public class UserController {
     }
 
     @GetMapping
-    private ResponseEntity<List<UserResponseDTO>> findAll() {
+    public ResponseEntity<List<UserResponseDTO>> findAll() {
         return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     @PostMapping
-    private ResponseEntity<UserResponseDTO> create(@RequestBody @Valid UserCreateDTO userCreateDTO) {
+    public ResponseEntity<UserResponseDTO> create(@RequestBody @Valid UserCreateDTO userCreateDTO) {
         UserResponseDTO newUser = userService.create(userCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<UserResponseDTO> updateById(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
+    public ResponseEntity<UserResponseDTO> updateById(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
         UserResponseDTO updatedUser = userService.updateById(id, userUpdateDTO);
         return ResponseEntity.ok(updatedUser);
     }
+
+    @PutMapping("/setActiveFalse/{id}")
+    public ResponseEntity<UserResponseDTO> setActiveFalse(@PathVariable Long id, Principal principal) {
+        userService.setUserActiveFalse(id, principal.getName());
+        return ResponseEntity.ok().build();
+    }
+
 
     @DeleteMapping("/{id}")
     private ResponseEntity<Void> deleteById(@PathVariable Long id) {

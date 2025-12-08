@@ -6,7 +6,6 @@ import hu.spring.akos0012.server.service.CarModelService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,13 +20,22 @@ public class CarModelController {
     }
 
     @GetMapping
-    private ResponseEntity<List<CarModelResponseDTO>> findAll() {
+    public ResponseEntity<List<CarModelResponseDTO>> findAll() {
         return ResponseEntity.ok(carModelService.findAll());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/name/{name}")
+    public ResponseEntity<CarModelResponseDTO> findByName(@PathVariable String name) {
+        return ResponseEntity.ok(carModelService.findByName(name));
+    }
+
+    @GetMapping("/brand-id/{brandId}")
+    public ResponseEntity<List<CarModelResponseDTO>> findAllByBrandId(@PathVariable Long brandId) {
+        return ResponseEntity.ok(carModelService.findAllByBrandId(brandId));
+    }
+
     @PostMapping
-    private ResponseEntity<CarModelResponseDTO> create(@RequestBody @Valid CarModelCreateDTO carModelDTO) {
+    public ResponseEntity<CarModelResponseDTO> create(@RequestBody @Valid CarModelCreateDTO carModelDTO) {
         CarModelResponseDTO newCarModel = carModelService.create(carModelDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newCarModel);
     }

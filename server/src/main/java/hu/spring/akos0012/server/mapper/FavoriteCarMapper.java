@@ -8,10 +8,10 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {CarModelMapper.class})
 public interface FavoriteCarMapper {
 
-    @Mapping(source = "carModel.id", target = "carModelId")
+    @Mapping(source = "carModel", target = "carModel")
     @Mapping(source = "user.id", target = "userId")
     FavoriteCarResponseDTO toDto(FavoriteCar favoriteCar);
 
