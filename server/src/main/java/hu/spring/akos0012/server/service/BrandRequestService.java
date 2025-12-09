@@ -5,6 +5,7 @@ import hu.spring.akos0012.server.dto.brandrequest.BrandRequestResponseDTO;
 import hu.spring.akos0012.server.dto.brandrequest.BrandRequestUpdateDTO;
 import hu.spring.akos0012.server.mapper.BrandRequestMapper;
 import hu.spring.akos0012.server.model.BrandRequest;
+import hu.spring.akos0012.server.model.User;
 import hu.spring.akos0012.server.repository.BrandRequestRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,9 +19,12 @@ public class BrandRequestService {
     private final BrandRequestRepository brandRequestRepository;
     private final BrandRequestMapper brandRequestMapper;
 
-    public BrandRequestService(BrandRequestRepository brandRequestRepository, BrandRequestMapper brandRequestMapper) {
+    private final UserService userService;
+
+    public BrandRequestService(BrandRequestRepository brandRequestRepository, BrandRequestMapper brandRequestMapper, UserService userService) {
         this.brandRequestRepository = brandRequestRepository;
         this.brandRequestMapper = brandRequestMapper;
+        this.userService = userService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -37,7 +41,17 @@ public class BrandRequestService {
     }
 
     public void create(BrandRequestCreateDTO requestCreateDTO) {
-        BrandRequest brandRequest = brandRequestMapper.fromCreateDto(requestCreateDTO);
+        Long userId = requestCreateDTO.userId();
+
+        if (!userService.existsById(userId))
+            throw new EntityNotFoundException("User not found");
+
+        User user = new User();
+        user.setId(userId);
+        String brandName = requestCreateDTO.brandName();
+        String message = requestCreateDTO.message();
+
+        BrandRequest brandRequest = new BrandRequest(brandName, message, user);
         brandRequestRepository.save(brandRequest);
     }
 

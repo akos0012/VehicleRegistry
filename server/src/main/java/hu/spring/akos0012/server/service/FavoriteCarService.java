@@ -146,4 +146,8 @@ public class FavoriteCarService {
         carImageService.deleteAllByFavoriteCar_Id(id);
         favoriteCarRepository.deleteById(id);
     }
+
+    public int countByUserId(Long id) {
+        return favoriteCarRepository.countByUser_Id(id);
+    }
 }

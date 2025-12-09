@@ -3,8 +3,6 @@ package hu.spring.akos0012.server.controller;
 import hu.spring.akos0012.server.dto.user.UserCreateDTO;
 import hu.spring.akos0012.server.dto.user.UserResponseDTO;
 import hu.spring.akos0012.server.dto.user.UserUpdateDTO;
-import hu.spring.akos0012.server.mapper.UserMapper;
-import hu.spring.akos0012.server.model.User;
 import hu.spring.akos0012.server.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

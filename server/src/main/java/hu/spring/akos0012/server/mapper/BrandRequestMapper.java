@@ -15,7 +15,4 @@ public interface BrandRequestMapper {
     BrandRequestResponseDTO toDto(BrandRequest brandRequest);
 
     List<BrandRequestResponseDTO> toDtoList(List<BrandRequest> brandRequest);
-
-    @Mapping(target = "user", ignore = true)
-    BrandRequest fromCreateDto(BrandRequestCreateDTO createDTO);
 }

@@ -35,6 +35,12 @@ public class FavoriteCarController {
         return ResponseEntity.ok(favoriteCarService.findById(id, principal.getName()));
     }
 
+    @GetMapping("/count/{id}")
+    public ResponseEntity<Integer> countByUserId(@PathVariable Long id) {
+        int count = favoriteCarService.countByUserId(id);
+        return ResponseEntity.ok(count);
+    }
+
     @PostMapping
     public ResponseEntity<FavoriteCarResponseDTO> create(@RequestBody @Valid FavoriteCarCreateDTO favCarCreateDTO) {
         FavoriteCarResponseDTO newFavCar = favoriteCarService.create(favCarCreateDTO);

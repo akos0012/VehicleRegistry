@@ -21,4 +21,6 @@ public interface FavoriteCarRepository extends JpaRepository<FavoriteCar, Long> 
     List<Long> findIdsByUserId(Long userId);
 
     void deleteAllByUser_Id(Long userId);
+
+    int countByUser_Id(Long userId);
 }

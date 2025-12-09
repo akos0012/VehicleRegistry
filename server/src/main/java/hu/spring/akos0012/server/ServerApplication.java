@@ -18,6 +18,6 @@ public class ServerApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        //initDbService.insertTestData();
+        initDbService.insertTestData();
     }
 }

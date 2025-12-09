@@ -63,7 +63,6 @@ public class AuthService {
 
     private void validatePasswordOrHandleFailure(User user, String rawPassword) {
         if (passwordEncoder.matches(rawPassword, user.getPassword())) {
-            System.out.println("HELLO THERE!");
             return;
         }
 
