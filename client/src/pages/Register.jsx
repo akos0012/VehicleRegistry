@@ -6,8 +6,29 @@ const Register = () => {
     const [username, setUsername] = useState("");
     const [fullName, setFullName] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    const validatePassword = (password) => {
+        if (password.length < 8) return false;
+
+        let hasLower = false;
+        let hasUpper = false;
+        let hasNumber = false;
+        let hasSpecial = false;
+
+        const specialChars = "!@#$%^&*()_+{}[]:;<>,.?~/-";
+
+        for (let char of password) {
+            if (char >= 'a' && char <= 'z') hasLower = true;
+            else if (char >= 'A' && char <= 'Z') hasUpper = true;
+            else if (char >= '0' && char <= '9') hasNumber = true;
+            else if (specialChars.includes(char)) hasSpecial = true;
+        }
+
+        return hasLower && hasUpper && hasNumber && hasSpecial;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -19,11 +40,25 @@ const Register = () => {
             return;
         }
 
+        if (password !== confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            setError("Password must be at least 8 characters long and include uppercase, lowercase, number, and special character");
+            return;
+        }
+
         try {
             await authService.register({ username, fullName, password });
             navigate("/login");
         } catch (err) {
-            setError(err.message);
+            if (err.response && err.response.status === 409) {
+                setError("Username is already taken");
+            } else {
+                setError(err.message || "An error occurred");
+            }
         }
     };
 
@@ -71,6 +106,19 @@ const Register = () => {
                     />
                     <div className="invalid-feedback">
                         Please choose a password
+                    </div>
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Confirm Password</label>
+                    <input
+                        type="password"
+                        className="form-control"
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        required
+                    />
+                    <div className="invalid-feedback">
+                        Please confirm your password
                     </div>
                 </div>
                 <button type="submit" className="btn btn-primary w-100">Register</button>

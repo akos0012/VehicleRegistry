@@ -23,10 +23,21 @@ const Login = () => {
             localStorage.setItem("token", token);
 
             const roles = authService.getRoles(token);
-            if (roles.includes("ROLE_ADMIN")) navigate("/admin");
+            if (roles.includes("ROLE_ADMIN")) navigate("/admin/userManagement");
             else navigate("/favorite-cars");
         } catch (err) {
-            setError(err.message);
+            if (err.response) {
+                if (err.response.status === 401) {
+                    setError("Invalid username or password");
+                } else if (err.response.status === 403) {
+                    setError("Your account has been deactivated");
+                } else {
+                    setError("An unknown error occurred");
+                }
+            } else {
+                setError("An unknown error occurred");
+                console.log(err);
+            }
         }
     };
 

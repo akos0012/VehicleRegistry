@@ -26,8 +26,10 @@ const UserLayout = () => {
             <header>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
                     <div className="container-xxl">
-                        <div className="d-flex align-items-center">
+                        <div className="d-flex align-items-center gap-2">
+                            <Link to="/myaccount" className="btn btn-outline-primary">My account</Link>
                             <Link to="/favorite-cars" className="btn btn-outline-primary">Favorite</Link>
+                            <Link to="/brand-request" className="btn btn-outline-primary">Request</Link>
                         </div>
                         <div className="flex-grow-1 d-flex justify-content-center">
                             {fullName && (

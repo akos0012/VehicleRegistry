@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.interceptors.response.use(
+/*axios.interceptors.response.use(
     response => response,
     error => {
         if (error.response && error.response.status === 401) {
@@ -9,6 +9,6 @@ axios.interceptors.response.use(
         }
         return Promise.reject(error);
     }
-);
+);*/
 
 export default axios;

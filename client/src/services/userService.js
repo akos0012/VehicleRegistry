@@ -17,6 +17,14 @@ const findById = async (id) => {
     return res.data;
 };
 
+const create = async ({ fullName, username, password, role, active }) => {
+    const res = await axios.post(`${API_URL}`,
+        { fullName, username, password, role, active },
+        { headers: getAuthHeader() }
+    );
+    return res.data;
+};
+
 const updateById = async (id, { username, role, fullName, active, failedLoginAttempts }) => {
     const res = await axios.put(`${API_URL}/${id}`,
         { username, role, fullName, active, failedLoginAttempts },
@@ -26,7 +34,11 @@ const updateById = async (id, { username, role, fullName, active, failedLoginAtt
 };
 
 const setActiveFalse = async (id) => {
-    const res = await axios.put(`${API_URL}/setActiveFalse/${id}`, { headers: getAuthHeader() });
+    const res = await axios.put(
+        `${API_URL}/setActiveFalse/${id}`,
+        {},
+        { headers: getAuthHeader() }
+    );
     return res.data;
 };
 
@@ -37,6 +49,7 @@ const deleteById = async (id) => {
 const userService = {
     findAll,
     findById,
+    create,
     updateById,
     setActiveFalse,
     deleteById

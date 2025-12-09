@@ -22,6 +22,11 @@ const findById = async (id) => {
     return res.data;
 };
 
+const countByUserId = async (id) => {
+    const res = await axios.get(`${API_URL}/count/${id}`, { headers: getAuthHeader() });
+    return res.data;
+};
+
 const create = async ({ userId, carModelId, year, color, fuel }) => {
     const res = await axios.post(`${API_URL}`,
         { userId, carModelId, year, color, fuel },
@@ -63,6 +68,7 @@ const favoriteCarService = {
     findAll,
     findAllByUserId,
     findById,
+    countByUserId,
     create,
     createWithModel,
     updateById,
